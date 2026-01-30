@@ -513,3 +513,25 @@ function waitForMapReady() {
         });
     });
 }
+
+////////////////////////////////////////////////////////////////
+// Codigos para debugar o Openlayers e a relação entre bakc e front
+
+export async function calculateAndDrawRoute(origin, destination) {
+    console.log('🚀 calculateAndDrawRoute chamada!', { origin, destination });
+    
+    clearRoute();
+    showMessage('Calculando rota por coordenadas...', 'info');
+    
+    console.log('📍 setOriginCoords:', origin);
+    setOriginCoords(origin);
+    
+    console.log('🏁 setDestinationCoords:', destination);
+    setDestinationCoords(destination);
+    
+    console.log('⏳ Aguardando mapReady...');
+    await waitForMapReady();
+    
+    console.log('🎨 Desenhando marcadores...');
+    drawRouteMarkers();
+    
