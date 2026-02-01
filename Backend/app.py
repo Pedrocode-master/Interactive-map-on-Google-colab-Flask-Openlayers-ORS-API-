@@ -533,6 +533,33 @@ def get_usage_stats():
 @limiter.limit("30 per minute")  # Limite de requisições
 @check_tier_limits 
 def calcular_rota():
+    payload = request.get_json()
+    logger.info(f"[DEBUG] Payload recebido do frontend: {payload}")
+
+    # 2️⃣ Verificar se o payload possui coordenadas válidas
+    coords = payload.get('coordinates', [])
+    if not coords or len(coords) < 2:
+        logger.warning(f"[DEBUG] Coordenadas insuficientes: {coords}")
+        return jsonify({"msg": "Not enough segments"}), 422
+
+    # 3️⃣ Log antes de enviar para ORS/TomTom
+    ors_payload = {
+        "coordinates": coords
+    }
+    if payload.get("constraints"):
+        ors_payload["constraints"] = payload["constraints"]
+
+    logger.info(f"[DEBUG] Payload enviado para ORS/TomTom: {ors_payload}")
+
+    try:
+        # 🔹 Aqui você chama sua função que acessa ORS/TomTom
+        result = call_external_route_service(ors_payload)  # sua função real
+        logger.info(f"[DEBUG] Resposta do ORS/TomTom: {result}")
+    except Exception as e:
+        logger.error(f"[ERRO] Falha ao chamar ORS/TomTom: {e}")
+        return jsonify({"msg": "Erro ao calcular rota", "erro": str(e)}), 500
+
+    return jsonify(result)
     """
     Endpoint de rota com otimização inteligente integrada + visualização de tráfego
     REQUER AUTENTICAÇÃO JWT
