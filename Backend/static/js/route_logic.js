@@ -287,7 +287,13 @@ async function fetchRouteData(origin, destination, constraints = null) {
         const response = await fetch(`${ngrokUrl}${preferredRouteEndpoint}`, {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify(requestBody)
+            body: JSON.stringify({
+                coordinates: [
+                    [origin.lon, origin.lat],
+                    [destination.lon, destination.lat]
+                ],
+                constraints: constraints
+            })
         });
         
         const geojsonResult = await response.json();
@@ -534,4 +540,3 @@ function waitForMapReady() {
 
 ////////////////////////////////////////////////////////////////
 // Codigos para debugar o Openlayers e a relação entre bakc e front
-
