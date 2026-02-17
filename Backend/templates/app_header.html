@@ -1,0 +1,55 @@
+<header>
+  <div class="header-container">
+    
+    <!-- 🆕 TABS DE NAVEGAÇÃO (Mobile) -->
+    <div class="header-tabs">
+      <button class="tab-btn active" data-tab="gps">📍 GPS</button>
+      <button class="tab-btn" data-tab="route">🗺️ Rota</button>
+    </div>
+    
+    <!-- 🆕 CONTEÚDO DAS TABS -->
+    <div class="tab-content active" id="tab-gps">
+      <button class="btn" id="btn-center">📍 Centralizar</button>
+      <button class="btn" id="btn-follow">▶ Seguir: OFF</button>
+    </div>
+    
+    <div class="tab-content" id="tab-route">
+      <div id="controls" class="controls">
+        <input id="start" type="text" placeholder="Origem (GPS)">
+        <input id="end" type="text" placeholder="Destino">
+        
+        <div style="display: flex; gap: 5px;">
+          <button id="rota" class="btn" title="Gerar rota">Calcular</button>
+          <button id="locate-button" class="btn" aria-label="Minha localização">
+            <i class="fas fa-location-arrow"></i>
+          </button>
+          <button id="clear-button" class="btn" aria-label="Limpar">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 🆕 VERSÃO DESKTOP (oculta em mobile) -->
+    <div class="desktop-header">
+  <div style="display:flex; gap:8px; align-items:center;">
+    <div><strong>GPS — OpenLayers</strong></div>
+    <button class="btn" id="btn-center-desktop">📍 Centralizar</button>
+    <button class="btn" id="btn-follow-desktop">▶ Seguir: OFF</button>
+  </div>
+
+  <div id="controls-desktop" class="controls">
+    <input id="start-desktop" type="text" placeholder="Minha localização (opcional)">
+    <input id="end-desktop" type="text" placeholder="Destino">
+    
+    <div style="display: flex; gap: 5px;">
+      <button id="rota-desktop" class="btn">Gerar rota</button>
+      <button id="locate-button-desktop" class="btn">
+        <i class="fas fa-location-arrow"></i>
+      </button>
+      <button id="clear-button-desktop" class="btn">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+</div>

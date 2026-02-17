@@ -1,0 +1,264 @@
+/* static/css/map_controls.css */
+
+/* ===================================================================
+   ESTILOS BASE - DESKTOP
+   =================================================================== */
+
+#controls,
+#controls-desktop {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center; /* Centraliza os itens internamente */
+    gap: 10px;
+    
+    background: white;
+    padding: 10px 20px;
+    border-radius: 50px; /* Estilo pílula para não cortar as quinas */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+    
+    /* Posicionamento fixo no centro do topo */
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    max-width: 95vw; /* Impede que ele saia da tela em monitores menores */
+    z-index: 1200;
+}
+
+#controls input,
+#controls-desktop input {
+  padding: 8px;
+  width: 150px !important; /* Tamanho fixo ideal */
+  min-width: 100px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  width: 130px;
+  height: 36px;
+  z-index:1100;
+  flex-shrink: 0;
+}
+
+#rota,
+#rota-desktop {
+  height: 36px;
+  white-space: nowrap;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  z-index:1100;
+  justify-content: center;
+}
+
+#locate-button,
+#clear-button,
+#locate-button-desktop,
+#clear-button-desktop {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index:1100;
+}
+
+/* ===================================================================
+   🔧 CORREÇÃO: Sistema de Tabs
+   =================================================================== */
+
+/* Desktop: esconde tabs, mostra header normal */
+.header-tabs,
+.tab-content {
+  display:none;
+}
+
+.desktop-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  z-index:1100;
+}
+
+/* ===================================================================
+   🔧 CORREÇÃO: Controles de Zoom - APENAS NATIVOS
+   =================================================================== */
+
+/* OpenLayers já cria controles nativos, vamos apenas estilizá-los */
+.ol-zoom {
+  left: 12px !important;
+  top: 100px !important;
+  right: auto !important;
+}
+
+.ol-zoom button {
+  background: rgba(255,255,255,0.95) !important;
+  border-radius: 4px !important;
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 18px !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12) !important;
+  margin-bottom: 4px !important;
+}
+
+.ol-zoom button:hover {
+  background: white !important;
+}
+
+/* 🔧 Esconde controles customizados duplicados */
+.ol-zoom-custom,
+.custom-zoom-buttons,
+.ol-zoom-reset {
+  display: none !important;
+}
+
+/* ===================================================================
+   MOBILE ONLY
+   =================================================================== */
+
+@media (max-width: 768px) {
+  /* 🔧 Esconde versão desktop */
+  .desktop-header {
+    display: none !important; 
+  }
+  
+  /* 🔧 Mostra tabs */
+  .header-tabs {
+    display: flex !important;
+    gap: 4px;
+    width: 100%;
+    margin-bottom: 8px;
+    z-index:1100;   
+  }
+  
+  .tab-btn {
+    flex: 1;
+    padding: 10px 8px;
+    border: none;
+    background: #e9ecef;
+    border-radius: 8px;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .tab-btn.active {
+    background: #007bff;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  /* Mostra conteúdo da tab ativa */
+  .tab-content.active {
+    display: flex !important;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+  
+  /* Header */
+  header {
+    padding: 8px;
+    z-index: 1100 !important; /* Força o cabeçalho mobile a ficar sobre o mapa */
+    position: relative;
+  }
+  
+  header .header-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  
+  /* Tab GPS - botões lado a lado */
+  #tab-gps {
+    flex-direction: row !important;
+    gap: 6px;
+  }
+  
+  #tab-gps .btn {
+    flex: 1;
+    padding: 10px 8px;
+    font-size: 0.8em;
+    white-space: nowrap;
+    min-height: 42px;
+  }
+  
+  /* Tab Rota - inputs + botões */
+  #tab-route #controls {
+    display: flex !important;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    padding: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  #tab-route input {
+    width: 100% !important;
+    height: 42px;
+    font-size: 15px;
+    padding: 8px 12px;
+    box-sizing: border-box;
+  }
+  
+  #tab-route #controls > div {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+  
+  #tab-route #rota {
+    flex: 1;
+    height: 42px;
+    font-size: 0.85em;
+    padding: 0 10px;
+  }
+  
+  #tab-route #locate-button,
+  #tab-route #clear-button {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+  
+  /* 🔧 Zoom maior em mobile */
+  .ol-zoom button {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .tab-btn {
+    font-size: 0.75em;
+    padding: 8px 6px;
+  }
+  
+  #tab-gps .btn {
+    font-size: 0.75em;
+  }
+  
+  #tab-route input {
+    font-size: 14px;
+    height: 40px;
+  }
+  
+  #tab-route #rota {
+    font-size: 0.8em;
+    height: 40px;
+  }
+  
+  #tab-route #locate-button,
+  #tab-route #clear-button {
+    width: 40px;
+    height: 40px;
+  }
+}

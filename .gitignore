@@ -1,0 +1,112 @@
+#################################
+# PYTHON
+#################################
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.pytype/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+#################################
+# ENV / SEGREDOS
+#################################
+.env
+.env.*
+*.key
+*.pem
+*.crt
+
+#################################
+# NODE / FRONTEND
+#################################
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+#################################
+# BUILD / DIST
+#################################
+dist/
+build/
+out/
+.cache/
+
+#################################
+# DOCKER
+#################################
+*.log
+docker-data/
+docker-volumes/
+tmp/
+
+#################################
+# VSCODE / IDE
+#################################
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+#################################
+# SISTEMA OPERACIONAL
+#################################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+Thumbs.db
+Thumbs.db:encryptable
+desktop.ini
+
+#################################
+# TESTES / COVERAGE
+#################################
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+nosetests.xml
+
+#################################
+# DATABASE / CACHE
+#################################
+*.sqlite3
+*.db
+*.rdb
+*.dump
+
+#################################
+# TEMP / BACKUP
+#################################
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+#################################
+# MISC
+#################################
+*.orig
+*.rej
+*.log
+*.stackdump
