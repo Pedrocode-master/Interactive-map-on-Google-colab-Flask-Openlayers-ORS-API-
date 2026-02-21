@@ -129,5 +129,7 @@ function initializeMap() {
     });
 }
 
+console.log("map_init carregou");
+
 // Inicia a aplicação quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', initializeMap);
