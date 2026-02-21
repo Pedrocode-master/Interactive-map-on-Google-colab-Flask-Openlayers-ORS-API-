@@ -208,4 +208,23 @@ function syncButtons() {
 }
 
 syncButtons();
+
+// 🆕 ATIVA O PRIMEIRO TAB AUTOMATICAMENTE EM MOBILE
+setTimeout(() => {
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        const firstTab = document.querySelector('.tab-btn[data-tab="gps"]');
+        const firstContent = document.getElementById('tab-gps');
+        
+        if (firstTab && firstContent) {
+            firstTab.classList.add('active');
+            firstContent.classList.add('active');
+            console.log('✅ Tab GPS ativada automaticamente (mobile)');
+        } else {
+            console.warn('⚠️ Tabs mobile não encontradas');
+        }
+    }
+}, 100); // Pequeno delay para garantir que o DOM está pronto
+
 });
