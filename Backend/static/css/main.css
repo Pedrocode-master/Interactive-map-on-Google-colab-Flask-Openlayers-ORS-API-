@@ -196,3 +196,30 @@ label {
     padding: 0 12px 25px 12px;
   }
 }
+
+/* ===================================================================
+   🔧 CORREÇÃO CRÍTICA: FORÇA CLIQUES NO MAPA E OVERLAYS
+   =================================================================== */
+
+.ol-overlaycontainer,
+.ol-overlaycontainer-stopevent,
+.ol-viewport,
+.ol-layers,
+.ol-layer,
+canvas {
+    pointer-events: auto !important;
+}
+
+/* Garante que o mapa receba cliques */
+#map,
+#map * {
+    pointer-events: auto !important;
+}
+
+/* Exceção: controles de UI mantêm pointer-events */
+.ol-zoom,
+.ol-rotate,
+.ol-attribution,
+.ol-control {
+    pointer-events: auto !important;
+}
