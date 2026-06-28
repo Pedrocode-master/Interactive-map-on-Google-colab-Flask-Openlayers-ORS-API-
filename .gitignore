@@ -24,6 +24,8 @@ ENV/
 *.key
 *.pem
 *.crt
+Token BD
+**/Token BD
 
 #################################
 # NODE / FRONTEND

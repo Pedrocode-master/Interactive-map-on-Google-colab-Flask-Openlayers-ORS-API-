@@ -164,41 +164,6 @@ jwt = JWTManager(app)
 tier_manager = TierManager(db.session)
 
 # ========================================================================
-# MODELOS DE BANCO DE DADOS
-# ========================================================================
-'''class User(db.Model):
-    __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
-    password_hash = db.Column(db.LargeBinary, nullable=False)  # Armazena como bytes
-    tier = db.Column(db.String(20), default='free', nullable=False)
-    monthly_requests_count = db.Column(db.Integer, default=0, nullable=False)
-    last_reset_date = db.Column(db.DateTime, default=db.func.now())
-    created_at = db.Column(db.DateTime, default=db.func.now())
-    
-    def set_password(self, password):
-        """Hash da senha com bcrypt"""
-        self.password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    
-    def check_password(self, password):
-        """Verifica se a senha está correta"""
-        return bcrypt.checkpw(password.encode('utf-8'), self.password_hash)
-
-class LoginHistory(db.Model):
-    __tablename__ = 'login_history'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    token = db.Column(db.String(500), nullable=False)
-    login_at = db.Column(db.DateTime, default=db.func.now())
-    ip_address = db.Column(db.String(45), nullable=True)
-    user_agent = db.Column(db.String(200), nullable=True)
-    
-    # Relacionamento
-    user = db.relationship('User', backref=db.backref('login_history', lazy=True))
-'''
-# ========================================================================
 # FUNÇÕES AUXILIARES
 # ========================================================================
 def _get_traffic_color(traffic_factor: float) -> str:
@@ -381,27 +346,36 @@ def register():
         return jsonify({"erro": "Erro ao criar usuário"}), 500
 
 @app.route('/api/create-first-admin', methods=['POST'])
+@limiter.limit("3 per hour")
 def create_first_admin():
     """
     Cria o primeiro admin do sistema
     ⚠️ REMOVA ESTA ROTA DEPOIS DE CRIAR O ADMIN!
     """
     data = request.get_json()
-    
-    # Código secreto - MUDE PARA ALGO SEU!
-    SECRET_CODE = "seu-codigo-secreto-xyz-789"
-    
-    if data.get('secret_code') != SECRET_CODE:
+
+    if not data:
+        return jsonify({"erro": "Dados ausentes"}), 400
+
+    # Código secreto definido via variável de ambiente (sem fallback)
+    secret_code = os.environ.get('ADMIN_SETUP_SECRET')
+    if not secret_code:
+        return jsonify({"erro": "Rota de criação de admin desabilitada"}), 403
+
+    if data.get('secret_code') != secret_code:
         return jsonify({"erro": "Código secreto inválido"}), 403
-    
+
     # Verifica se já existe admin
     existing_admin = User.query.filter_by(tier='admin').first()
     if existing_admin:
         return jsonify({"erro": "Admin já existe no sistema!"}), 400
-    
-    username = data.get('username', 'admin')
-    password = data.get('password', 'admin123')
-    
+
+    username = data.get('username', '').strip()
+    password = data.get('password', '')
+
+    if not username or len(username) < 3:
+        return jsonify({"erro": "Username deve ter pelo menos 3 caracteres"}), 400
+
     if len(password) < 8:
         return jsonify({"erro": "Senha deve ter pelo menos 8 caracteres"}), 400
     
@@ -551,23 +525,6 @@ def calcular_rota():
 
     logger.info(f"[DEBUG] Payload enviado para ORS/TomTom: {ors_payload}")
 
-    """try:
-        # 🔹 Aqui você chama sua função que acessa ORS/TomTom
-        result = call_external_route_service(ors_payload)  # sua função real
-        logger.info(f"[DEBUG] Resposta do ORS/TomTom: {result}")
-    except Exception as e:
-        logger.error(f"[ERRO] Falha ao chamar ORS/TomTom: {e}")
-        return jsonify({"msg": "Erro ao calcular rota", "erro": str(e)}), 500
-
-    return jsonify(result)
-    """
-
-    
-
-    """
-    Endpoint de rota com otimização inteligente integrada + visualização de tráfego
-    REQUER AUTENTICAÇÃO JWT
-    """
     current_user = get_jwt_identity()
     logger.info(f"[ROTA] Usuário {current_user} solicitando rota...")
     user = User.query.filter_by(username=current_user).first()
@@ -890,31 +847,10 @@ def health_check():
 def index():
     ngrok_url = os.environ.get('NGROK_URL', None)
     try:
-        return render_template('index.html', ngrok_url=ngrok_url)  # ← COLOQUE ISSO
+        return render_template('index.html', ngrok_url=ngrok_url)
     except Exception as e:
         logger.error(f"Erro ao servir index.html: {e}")
         return "Erro interno do servidor ao carregar a página.", 500
-    #return jsonify({
-    #    "name": "GPS Routing API",
-    #    "version": "2.0.0",
-    #    "endpoints": {
-    #        "auth": {
-    #            "register": "POST /api/register",
-    #            "login": "POST /api/login",
-    #            "me": "GET /api/me [requer token]"
-    #        },
-    #        "routing": {
-     #           "route": "POST /rota [requer token]",
-     #           "geocoding": "POST /geocoding [requer token]"
-    #        },
-    #        "monitoring": {
-    #            "health": "GET /health",
-    #            "metrics": "GET /metrics"
-    #        }
-    #    },
-    #    "authentication": "JWT Bearer Token",
-    #    "documentation": "https://github.com/seu-repo/gps-api"
-    #}), 200
 
 # ========================================================================
 # TRATAMENTO DE ERROS GLOBAL
@@ -935,60 +871,21 @@ def ratelimit_handler(e):
 # ========================================================================
 # INICIALIZAÇÃO DO SERVIDOR
 # ========================================================================
-'''def init_admin():
-    with app.app_context():
-        try:
-            admin = User.query.filter_by(username="admin").first()
-            if not admin:
-                admin = User(
-                    username="admin",
-                    tier="admin"
-                )
-                admin.set_password("admin123")
-                db.session.add(admin)
-                db.session.commit()
-                logger.info("✅ Admin criado com sucesso")
-            else:
-                logger.info("ℹ️ Admin já existe, pulando criação")
-
-        except Exception as e:
-            db.session.rollback()
-            logger.warning(f"⚠️ Erro ao criar admin: {e}")
-
-
-# ⚠️ Inicializa o banco sempre, mesmo quando rodando com gunicorn
-init_admin()'''
-
-print("DATABASE_URL =", os.environ.get("DATABASE_URL"))
-
 if __name__ == '__main__':
     # Configurações apenas para rodar localmente
     port = int(os.environ.get('PORT', 5000))
     debug_mode = os.environ.get('FLASK_DEBUG', '0') == '1'
-    app.run(host='0.0.0.0', port=port, debug=debug_mode)
 
     if debug_mode:
         logger.warning("⚠️ MODO DEBUG ATIVADO - NÃO USE EM PRODUÇÃO!")
-    
+
     logger.info(f"📁 Carregando .env de: {env_path.absolute()}")
     logger.info(f"🔑 JWT_SECRET_KEY encontrada: {'Sim' if os.environ.get('JWT_SECRET_KEY') else 'NÃO'}")
     logger.info(f"🚀 Servidor iniciando na porta {port}")
-    logger.info("📋 Endpoints disponíveis:")
-    logger.info("   GET  /              - Informações da API")
-    logger.info("   GET  /health        - Health check")
-    logger.info("   POST /api/register  - Registro de usuários")
-    logger.info("   POST /api/login     - Login e obtenção de token")
-    logger.info("   GET  /api/me        - Informações do usuário autenticado")
-    logger.info("   POST /geocoding     - Geocodificação de endereços [requer token]")
-    logger.info("   POST /rota          - Cálculo de rota [requer token]")
-    
-    
     if optimization_available:
         logger.info("   ✨ Otimização inteligente: ATIVADA")
     else:
         logger.info("   ⚠️ Otimização inteligente: DESATIVADA (chaves ausentes)")
-    
     logger.info(f"   🔐 CORS configurado para: {allowed_origins}")
-    logger.info(f"   🗄️ Banco de dados: {app.config['SQLALCHEMY_DATABASE_URI']}")
-    
-    app.run(debug=debug_mode, host='0.0.0.0', port=port)
+
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
